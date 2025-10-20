@@ -1,4 +1,5 @@
 
+
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -6,8 +7,62 @@ const {logUserVisit, sayHello} = require('./src/logger');
 
 const server = http.createServer((req, res) => {
 
+    /**
+     * Bilo koji fajl ako se ucitava iz foldera /public/js
+     *
+     * putanja mora biti "/public/js/*****.js"
+     */
+    if (req.url.startsWith('/public/js/') && req.url.endsWith('.js')) {
+
+        const jsPath = path.join(__dirname, req.url);
+
+        fs.readFile(jsPath, 'utf8', (err, data) => {
+            if(err) {
+                res.writeHead(404, { 'Content-Type' : 'text/plain' });
+                return res.end('JS file not found!');
+            }
+
+            res.writeHead(200, { 'Content-Type': 'application/javascript' });
+            return res.end(data);
+        });
+
+        return;
+    }
+
+    if (req.url.startsWith('/api/products')) {
+
+        /**
+         * /api/products/available => status: 'available'
+         * /api/products/not-available => status: 'not available'
+         * /api/products/all => status: sve
+         */
+
+        const jsonPath = path.join(__dirname+"/data", "products.json");
+
+        fs.readFile(jsonPath, 'utf8', (err, jsonResponse) => {
+
+            if(err) {
+                res.writeHead(404, { 'Content-Type' : 'text/plain' });
+                return res.end('JSON file not found!');
+            }
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+
+            const status = req.url.includes('available') ? req.url.split("/").pop() : null;
+
+            const response = status ?
+                JSON.parse(jsonResponse).filter(service => service.status === status) :
+                JSON.parse(jsonResponse);
+
+
+            return res.end(JSON.stringify(response));
+        });
+
+        return;
+    }
+
     // mojauto.com, mojauto.com/test, mojauto.com/nesto/nesto
-    const filePath = path.join(__dirname, 'index.html');
+    const filePath = path.join(__dirname+"/public", 'index.html');
     const navPath = path.join("./html/components", 'navigation.html');
     const footerPath = path.join("./html/components", 'footer.html');
 
@@ -53,12 +108,3 @@ const server = http.createServer((req, res) => {
 server.listen(3000, () => {
     console.log("Server runing at http://localhost:3000");
 });
-
-/**
- * html/components
- *  -> navigation.html
- *  -> footer.html
- *
- *  Prikazati footer u index.htmlu
- *  Ispraviti navigation.html tako da se ucivata iz components foldera
- */

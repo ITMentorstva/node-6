@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "Fuel Change",
+    "price": 59.99,
+    "status": "available"
+  },
+  {
+    "id": 2,
+    "name": "Oil Replacement",
+    "price": 79.49,
+    "status": "available"
+  },
+  {
+    "id": 3,
+    "name": "Brake Inspection",
+    "price": 49.99,
+    "status": "not-available"
+  },
+  {
+    "id": 4,
+    "name": "Tire Rotation",
+    "price": 39.99,
+    "status": "available"
+  },
+  {
+    "id": 5,
+    "name": "Engine Diagnostics",
+    "price": 89.99,
+    "status": "not-available"
+  },
+  {
+    "id": 6,
+    "name": "Air Filter Replacement",
+    "price": 29.99,
+    "status": "available"
+  }
+]
